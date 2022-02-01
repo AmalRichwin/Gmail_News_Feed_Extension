@@ -3,7 +3,7 @@ import React from 'react'
 import MailListItem from './components/MailListItem'
 import StoryListItem from './components/StoryListItem'
 import './styles.css'
-import { DOMMessage, DOMMessageResponse } from './types'
+import { DOMMessageResponse } from './types'
 
 interface IStory {
   title: string
@@ -12,9 +12,15 @@ interface IStory {
   publishDate: Date
 }
 
+interface IMail {
+  subject: string
+  title: string
+  isMailViewed: boolean
+}
+
 function App() {
   const [stories, setStories] = React.useState<IStory[]>([])
-  const [mails, setMails] = React.useState<DOMMessageResponse>()
+  const [mails, setMails] = React.useState<IMail[]>()
 
   const fetchStories = async () => {
     try {
@@ -49,21 +55,17 @@ function App() {
 
   React.useEffect(() => {
     chrome.tabs &&
-      chrome.tabs.query(
-        {
-          active: true,
-          currentWindow: true,
-        },
-        (tabs) => {
-          chrome.tabs.sendMessage(
-            tabs[0].id || 0,
-            { type: 'GET_DOM' } as DOMMessage,
-            (response: DOMMessageResponse) => {
-              setMails(response)
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { type: 'GET_MAILS' },
+          (response: DOMMessageResponse) => {
+            if (response.type === 'GET_MAILS_RESPONSE') {
+              setMails(response.mails)
             }
-          )
-        }
-      )
+          }
+        )
+      })
   })
 
   return (
@@ -72,8 +74,9 @@ function App() {
         <h1 className="text-xl text-center font-inter text-neutral-700">
           Mails
         </h1>
+
         {mails &&
-          mails.mails.map((mail, idx) => (
+          mails.map((mail, idx) => (
             <MailListItem
               key={`${mail.title} ${idx}`}
               isMailViewed={mail.isMailViewed}

@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 
 body {
-  min-width: 28rem;
+  min-width: 25rem;
   min-height: 100vh !important;
   background: #f5f5f5;
 }

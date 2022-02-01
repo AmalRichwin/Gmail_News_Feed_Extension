@@ -1,15 +1,12 @@
 {
-  "manifest_version": 3,
-  "name": "Mail Viewer",
+  "manifest_version": 2,
+  "name": "Mail Viewer And News Feed",
   "version": "0.1",
   "description": "Gmail viewer for chrome",
   "permissions": ["tabs", "activeTab"],
   "author": "Richwin",
   "short_name": "Mail Viewer and India Today Feed",
-  "action": {
-    "default_popup": "index.html",
-    "default_title": "Mail Viewer"
-  },
+  "browser_action": {},
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
@@ -17,13 +14,7 @@
     }
   ],
   "background": {
-    "service_workers": ["./background.js"]
+    "scripts": ["./background.js"]
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["index.html"],
-      "matches": ["http://*/*", "https://*/*"],
-      "extension_ids": ["lpdkikdnoidlilnjidfgikonalcjcgmp"]
-    }
-  ]
+  "web_accessible_resources": ["index.html"]
 }

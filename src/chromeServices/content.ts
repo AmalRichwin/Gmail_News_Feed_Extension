@@ -6,25 +6,31 @@ const messagesFromReactAppListener = (
   sender: chrome.runtime.MessageSender,
   sendResponse: (response: DOMMessageResponse) => void
 ) => {
-  const mails = Array.from(document.getElementsByClassName('zA')).map(
-    (mail) => {
-      const isMailViewed = mail.className.includes('yO')
+  if (msg.type === 'TOGGLE') {
+    console.log('ON TOGGLE')
+    toggle()
+  } else if (msg.type === 'GET_MAILS') {
+    const mails = Array.from(document.getElementsByClassName('zA')).map(
+      (mail) => {
+        const isMailViewed = mail.className.includes('yO')
 
-      return {
-        title: mail.getElementsByClassName('bA4')[0].textContent,
-        subject: isMailViewed
-          ? mail.getElementsByClassName('bog')[0].textContent
-          : mail.getElementsByClassName('bqe')[0].textContent,
-        isMailViewed,
+        return {
+          title: mail.getElementsByClassName('bA4')[0].textContent,
+          subject: isMailViewed
+            ? mail.getElementsByClassName('bog')[0].textContent
+            : mail.getElementsByClassName('bqe')[0].textContent,
+          isMailViewed,
+        }
       }
+    )
+
+    const response: DOMMessageResponse = {
+      type: 'GET_MAILS_RESPONSE',
+      mails: mails,
     }
-  )
 
-  const response: DOMMessageResponse = {
-    mails: mails,
+    sendResponse(response)
   }
-
-  sendResponse(response)
 }
 
 /**
@@ -32,13 +38,6 @@ const messagesFromReactAppListener = (
  */
 
 chrome.runtime.onMessage.addListener(messagesFromReactAppListener)
-
-chrome.runtime.onMessage.addListener(function (msg, sender) {
-  if (msg == 'toggle') {
-    console.log('ON TOGGLE')
-    toggle()
-  }
-})
 
 const iframe = document.createElement('iframe')
 iframe.style.background = 'green'
@@ -55,7 +54,7 @@ document.body.appendChild(iframe)
 
 function toggle() {
   if (iframe.style.width == '0px') {
-    iframe.style.width = '200px'
+    iframe.style.width = '35rem'
   } else {
     iframe.style.width = '0px'
   }
